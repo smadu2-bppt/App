@@ -107,55 +107,38 @@
   <!-- Script Logika Dinamis (Alpine.js) -->
   <script>
     function portalApp() {
-      return {
-        search: '',
-        selectedCategory: 'Semua',
-        categories: ['Semua', 'Akademik', 'Administrasi', 'Layanan'],
-        
-        // ------------------------------------------------------------------
-        // DATA APLIKASI DINAMIS (Tambahkan aplikasi barumu di dalam daftar ini)
-        // ------------------------------------------------------------------
-        apps: [
-          {
-            id: 1,
-            title: 'Sistem Rapor Digital',
-            description: 'Aplikasi pengolahan nilai dan cetak rapor peserta didik berbasis Google Sheets & GAS.',
-            url: './rapor/', // Atau link folder GitHub/URL eksternal
-            icon: '📊',
-            category: 'Akademik',
-            status: 'v2.0 • Active'
-          },
-          {
-            id: 2,
-            title: 'Presensi Online Mobile',
-            description: 'Pencatatan kehadiran harian menggunakan lokasi dan foto selfie real-time.',
-            url: './presensi/',
-            icon: '📱',
-            category: 'Administrasi',
-            status: 'v1.5 • Active'
-          },
-          {
-            id: 3,
-            title: 'Persuratan & Arsip',
-            description: 'Generator penomoran surat otomatis dan penyimpanan otomatis di Google Drive.',
-            url: './surat/',
-            icon: '✉️',
-            category: 'Layanan',
-            status: 'v1.0 • Active'
-          }
-        ],
+  return {
+    search: '',
+    selectedCategory: 'Semua',
+    categories: ['Semua', 'Akademik', 'Administrasi', 'Layanan'],
+    apps: [],
+    loading: true, // State indikator memuat data
 
-        // Computed logic untuk Search & Filter
-        get filteredApps() {
-          return this.apps.filter(app => {
-            const matchesSearch = app.title.toLowerCase().includes(this.search.toLowerCase()) || 
-                                  app.description.toLowerCase().includes(this.search.toLowerCase());
-            const matchesCategory = this.selectedCategory === 'Semua' || app.category === this.selectedCategory;
-            return matchesSearch && matchesCategory;
-          });
-        }
+    // Fungsi otomatis berjalan saat halaman dibuka
+    async init() {
+      // Ganti URL di bawah dengan Web App API dari FASE 2
+      const apiUrl = 'https://script.google.com/macros/s/AKfycb...API_SPREADSHEET_KAMU.../exec';
+      
+      try {
+        const response = await fetch(apiUrl);
+        this.apps = await response.json();
+      } catch (error) {
+        console.error('Gagal mengambil data dari Google Sheets:', error);
+      } finally {
+        this.loading = false;
       }
+    },
+
+    get filteredApps() {
+      return this.apps.filter(app => {
+        const matchesSearch = app.title.toLowerCase().includes(this.search.toLowerCase()) || 
+                              app.description.toLowerCase().includes(this.search.toLowerCase());
+        const matchesCategory = this.selectedCategory === 'Semua' || app.category === this.selectedCategory;
+        return matchesSearch && matchesCategory;
+      });
     }
+  }
+}
   </script>
 </body>
 </html>
