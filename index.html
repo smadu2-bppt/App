@@ -1,27 +1,161 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full w-full overflow-hidden">
+<html lang="id" class="h-full bg-slate-950">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aplikasi Digital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central Portal Hub | Digital Ecosystem</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
 </head>
-<body class="h-full w-full m-0 p-0 overflow-hidden bg-slate-900" x-data="{ loaded: false }">
+<body class="h-full text-slate-100 flex flex-col antialiased selection:bg-indigo-500 selection:text-white" x-data="portalApp()">
 
-  <div x-show="!loaded" class="fixed inset-0 flex items-center justify-center bg-slate-900 text-white z-50">
-    <div class="flex flex-col items-center gap-3">
-      <div class="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-      <span class="text-sm font-medium tracking-wide">Memuat Aplikasi...</span>
+  <!-- Header Section -->
+  <header class="border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <span class="text-xl">🚀</span>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white tracking-tight">Portal Apps Central</h1>
+          <p class="text-xs text-slate-400">Ekosistem Aplikasi Digital Terintegrasi</p>
+        </div>
+      </div>
+      
+      <!-- Live Search Box -->
+      <div class="relative w-full sm:w-72">
+        <input 
+          type="text" 
+          x-model="search" 
+          placeholder="Cari aplikasi..." 
+          class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+        >
+      </div>
     </div>
-  </div>
+  </header>
 
-  <iframe 
-    src="https://script.google.com/macros/s/AKfycbyAFAfC_6GzUZ4ab3pcqyAAqpE1AAE-SJO34R8uvXH12d4lwsKpggfwe-Z-8NAhOo71HQ/exec" 
-    class="w-full h-full border-0"
-    @load="loaded = true"
-    allow="geolocation; microphone; camera; clipboard-write">
-  </iframe>
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Hero / Welcome Card -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900/40 via-slate-900 to-slate-900 border border-slate-800 p-6 md:p-8">
+      <div class="relative z-10 max-w-2xl space-y-2">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+          Dashboard Interaktif
+        </span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">Selamat Datang di Hub Aplikasi</h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Pilih layanan digital yang ingin kamu akses di bawah ini. Seluruh aplikasi dirancang responsif dan teroptimasi untuk perangkat desktop maupun mobile.
+        </p>
+      </div>
+    </div>
 
+    <!-- Filter Category Tabs -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <template x-for="cat in categories" :key="cat">
+        <button 
+          @click="selectedCategory = cat"
+          :class="selectedCategory === cat ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200'"
+          class="px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap border border-slate-800"
+          x-text="cat"
+        ></button>
+      </template>
+    </div>
+
+    <!-- Dynamic App Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <template x-for="app in filteredApps" :key="app.id">
+        <div class="group bg-slate-900/80 hover:bg-slate-900 border border-slate-800/80 hover:border-indigo-500/50 rounded-2xl p-5 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-start justify-between">
+              <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700/50 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform" x-text="app.icon"></div>
+              <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-indigo-400 border border-slate-700/50" x-text="app.category"></span>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white group-hover:text-indigo-400 transition-colors" x-text="app.title"></h3>
+              <p class="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed" x-text="app.description"></p>
+            </div>
+          </div>
+          <div class="pt-5 mt-4 border-t border-slate-800/60 flex items-center justify-between">
+            <span class="text-[11px] text-slate-500 font-medium" x-text="app.status"></span>
+            <a 
+              :href="app.url" 
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-xs font-semibold transition-all group-hover:translate-x-0.5"
+            >
+              <span>Buka App</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <!-- Empty State jika pencarian tidak ditemukan -->
+    <div x-show="filteredApps.length === 0" class="text-center py-12 space-y-3">
+      <div class="text-4xl">🔍</div>
+      <p class="text-slate-400 text-sm">Aplikasi yang kamu cari tidak ditemukan.</p>
+    </div>
+
+  </main>
+
+  <!-- Script Logika Dinamis (Alpine.js) -->
+  <script>
+    function portalApp() {
+      return {
+        search: '',
+        selectedCategory: 'Semua',
+        categories: ['Semua', 'Akademik', 'Administrasi', 'Layanan'],
+        
+        // ------------------------------------------------------------------
+        // DATA APLIKASI DINAMIS (Tambahkan aplikasi barumu di dalam daftar ini)
+        // ------------------------------------------------------------------
+        apps: [
+          {
+            id: 1,
+            title: 'Sistem Rapor Digital',
+            description: 'Aplikasi pengolahan nilai dan cetak rapor peserta didik berbasis Google Sheets & GAS.',
+            url: './rapor/', // Atau link folder GitHub/URL eksternal
+            icon: '📊',
+            category: 'Akademik',
+            status: 'v2.0 • Active'
+          },
+          {
+            id: 2,
+            title: 'Presensi Online Mobile',
+            description: 'Pencatatan kehadiran harian menggunakan lokasi dan foto selfie real-time.',
+            url: './presensi/',
+            icon: '📱',
+            category: 'Administrasi',
+            status: 'v1.5 • Active'
+          },
+          {
+            id: 3,
+            title: 'Persuratan & Arsip',
+            description: 'Generator penomoran surat otomatis dan penyimpanan otomatis di Google Drive.',
+            url: './surat/',
+            icon: '✉️',
+            category: 'Layanan',
+            status: 'v1.0 • Active'
+          }
+        ],
+
+        // Computed logic untuk Search & Filter
+        get filteredApps() {
+          return this.apps.filter(app => {
+            const matchesSearch = app.title.toLowerCase().includes(this.search.toLowerCase()) || 
+                                  app.description.toLowerCase().includes(this.search.toLowerCase());
+            const matchesCategory = this.selectedCategory === 'Semua' || app.category === this.selectedCategory;
+            return matchesSearch && matchesCategory;
+          });
+        }
+      }
+    }
+  </script>
 </body>
 </html>
